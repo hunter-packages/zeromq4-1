@@ -688,16 +688,41 @@ if(ZMQ_BUILD_TESTS)
 endif()
 
 #-----------------------------------------------------------------------------
+# generate CMake config file
+include(CMakePackageConfigHelpers)
+
+set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(config_export_name "${PROJECT_NAME}Config")
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(project_config "${CMAKE_CURRENT_BINARY_DIR}/${config_export_name}.cmake")
+set(version_config "${CMAKE_CURRENT_BINARY_DIR}/${config_export_name}Version.cmake")
+set(namespace "${PROJECT_NAME}::")
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(builds/cmake/ZeroMQConfig.cmake.in
+  ${project_config}
+  INSTALL_DESTINATION ${config_install_dir})
+
+write_basic_package_version_file(
+  ${version_config}
+  VERSION ZMQ_VERSION_STRING
+  COMPATIBILITY SameMajorVersion)
+
+install(FILES ${project_config} ${version_config}
+    DESTINATION ${config_install_dir})
+#-----------------------------------------------------------------------------
 # installer
 
 if(MSVC)
   install(TARGETS libzmq libzmq-static
+          EXPORT ${targets_export_name}
           ARCHIVE DESTINATION lib
           LIBRARY DESTINATION lib
           PUBLIC_HEADER DESTINATION include
           COMPONENT SDK)
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     install(TARGETS libzmq libzmq-static
+            EXPORT ${targets_export_name}
             RUNTIME DESTINATION bin
             ARCHIVE DESTINATION lib
             PUBLIC_HEADER DESTINATION include
@@ -706,18 +731,27 @@ if(MSVC)
             COMPONENT SDK)
   else()
     install(TARGETS libzmq
+            EXPORT ${targets_export_name}
             RUNTIME DESTINATION bin
             PUBLIC_HEADER DESTINATION include
             COMPONENT Runtime)
   endif()
 else()
   install(TARGETS libzmq libzmq-static
+          EXPORT ${targets_export_name}
           RUNTIME DESTINATION bin
+          INCLUDES DESTINATION include
           ARCHIVE DESTINATION lib
           LIBRARY DESTINATION lib
           FRAMEWORK DESTINATION "Library/Frameworks"
           PUBLIC_HEADER DESTINATION include)
 endif()
+
+install(
+    EXPORT ${targets_export_name}
+    NAMESPACE ${namespace}
+    DESTINATION ${config_install_dir}
+)
 
 # install(FILES ${public_headers}
 #          DESTINATION include
