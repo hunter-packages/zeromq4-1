@@ -38,6 +38,7 @@
 
 #ifdef ZMQ_HAVE_WINDOWS
 #include "windows.hpp"
+#include "Netioapi.h"
 #else
 #include <sys/types.h>
 #include <arpa/inet.h>
