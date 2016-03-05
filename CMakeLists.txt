@@ -728,7 +728,6 @@ if(MSVC)
           COMPONENT SDK)
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     install(TARGETS libzmq libzmq-static
-            EXPORT ${targets_export_name}
             RUNTIME DESTINATION bin
             ARCHIVE DESTINATION lib
             PUBLIC_HEADER DESTINATION include
@@ -737,7 +736,6 @@ if(MSVC)
             COMPONENT SDK)
   else()
     install(TARGETS libzmq
-            EXPORT ${targets_export_name}
             RUNTIME DESTINATION bin
             PUBLIC_HEADER DESTINATION include
             COMPONENT Runtime)
