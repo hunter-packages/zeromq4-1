@@ -624,6 +624,15 @@ else()
       COMPILE_FLAGS "-DZMQ_STATIC"
       OUTPUT_NAME "zmq-static")
 endif()
+target_include_directories(libzmq SYSTEM INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>  # <prefix>/include
+)
+
+target_include_directories(libzmq-static SYSTEM INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>  # <prefix>/include
+)
 
 target_link_libraries(libzmq ${SODIUM_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(libzmq-static ${SODIUM_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
