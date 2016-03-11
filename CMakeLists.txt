@@ -507,11 +507,6 @@ foreach(source ${TWEETNACL_SOURCES})
   list(APPEND sources ${CMAKE_CURRENT_SOURCE_DIR}/${source})
 endforeach()
 
-foreach(source ${rc-sources})
-  list(APPEND sources ${CMAKE_CURRENT_BINARY_DIR}/${source})
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/${source}.in ${CMAKE_CURRENT_BINARY_DIR}/${source})
-endforeach()
-
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/builds/cmake/platform.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/platform.hpp)
 list(APPEND sources ${CMAKE_CURRENT_BINARY_DIR}/platform.hpp)
 
@@ -581,7 +576,12 @@ endif()
 # output
 
 if(MSVC)
-  add_library(libzmq SHARED ${sources} ${public_headers} ${html-docs} ${readme-docs} ${CMAKE_CURRENT_BINARY_DIR}/NSIS.template.in)
+  foreach(source ${rc-sources})
+    list(APPEND sources_rc ${CMAKE_CURRENT_BINARY_DIR}/${source})
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/${source}.in ${CMAKE_CURRENT_BINARY_DIR}/${source})
+  endforeach()
+
+  add_library(libzmq SHARED ${sources} ${sources_rc} ${public_headers} ${html-docs} ${readme-docs} ${CMAKE_CURRENT_BINARY_DIR}/NSIS.template.in)
   target_link_libraries(libzmq ${OPTIONAL_LIBRARIES})
   set_target_properties(libzmq PROPERTIES
     PUBLIC_HEADER "${public_headers}"
